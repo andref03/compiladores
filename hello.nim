@@ -1,0 +1,1 @@
+echo "Olá, Mundo! Olá, Nim!"
