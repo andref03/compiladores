@@ -1,0 +1,34 @@
+PARSER_BEGIN(Example)
+
+public class Example {
+    public static void main(String[] args) throws ParseException {
+        Example parser = new Example(System.in);
+        parser.Start();
+    }
+}
+
+PARSER_END(Example)
+
+void Start() :
+{}
+{
+    <IDENTIFIER> "=" <NUMBER> "+" <IDENTIFIER> <EOF>
+    {
+        System.out.println("Expressão Válida!");
+    }
+}
+
+SKIP :
+{
+    " "
+|   "\n"
+|   "\t"
+|   "\r"
+}
+
+TOKEN :
+{
+    < IDENTIFIER: (["a"-"z", "A"-"Z"])+ >
+|
+    < NUMBER: (["0"-"9"])+ >
+}
