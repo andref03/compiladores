@@ -14,7 +14,7 @@ for token in code.splitWhitespace():
     elif cleanToken.match(re"^[0-9]+([eE][+-]?[0-9]+)?$"):
         output.writeLine("NUM_INT ", cleanToken)
 
-    elif cleanToken.match(re"^[a-zA-Z_][a-zA-Z0-9_]*$"):
+    elif cleanToken.match(re"^[a-zA-Z][a-zA-Z0-9]*$"):
         if cleanToken in ["type", "object", "proc", "if", "int", "elif", "else", "while", "return", "var", "not", "and", "or", "mod"]:
             output.writeLine("KEYWORD ", cleanToken)
         else:
