@@ -1,10 +1,10 @@
 import strutils
 import re
 
-var code = readFile("compil-lab1-amostra-B-Andre-Felipe-de-Oliveira-Lopes.nim")
+var code = readFile("compil_lab1_amostra_B_Andre_Felipe_de_Oliveira_Lopes.nim")
 
 # tratamento de símbolos para garantir que sejam isolados como tokens separados
-# COLON
+# SYMBOLS
 for c in [":", ",", ";", "(", ")", "[", "]"]:
   code = code.replace(c, " " & c & " ")
 
@@ -12,7 +12,7 @@ for c in [":", ",", ";", "(", ")", "[", "]"]:
 code = code.replace("\n", " NEWLINE ")
 
 # saída
-let output = open("compil-lab1-resposta-C-Andre-Felipe-de-Oliveira-Lopes.txt", fmWrite)
+let output = open("compil_lab1_resposta_C_Andre_Felipe_de_Oliveira_Lopes.txt", fmWrite)
 
 # laço principal de tokenização
 for token in code.splitWhitespace():
