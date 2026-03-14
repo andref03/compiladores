@@ -5,7 +5,7 @@ var code = readFile("compil_lab1_amostra_B_Andre_Felipe_de_Oliveira_Lopes.nim")
 
 # tratamento de símbolos para garantir que sejam isolados como tokens separados
 # SYMBOLS
-for c in [":", ",", ";", "(", ")", "[", "]"]:
+for c in [":", ",", ";", "(", ")", "[", "]", "."]:
   code = code.replace(c, " " & c & " ")
 
 # NEWLINE
@@ -26,6 +26,9 @@ for token in code.splitWhitespace():
 
         of ",":
             output.writeLine("COMMA ", token)
+
+        of ".":
+            output.writeLine("DOT ", token)
 
         of ";":
             output.writeLine("SEMICOLON ", token)
@@ -59,6 +62,24 @@ for token in code.splitWhitespace():
 
         of "%":
             output.writeLine("MOD ", token)
+
+        of "<": 
+            output.writeLine("LT ", token) 
+            
+        of ">": 
+            output.writeLine("GT ", token) 
+        
+        of "<=": 
+            output.writeLine("LE ", token) 
+        
+        of ">=": 
+            output.writeLine("GE ", token) 
+        
+        of "==": 
+            output.writeLine("EQ ", token) 
+        
+        of "!=": 
+            output.writeLine("NE ", token)
 
         else:
             if token.match(re"^([0-9]+\.[0-9]*|\.[0-9]+)([eE][+-]?[0-9]+)?$"):
