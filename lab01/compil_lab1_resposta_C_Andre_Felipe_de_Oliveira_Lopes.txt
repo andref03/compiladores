@@ -214,7 +214,7 @@ DOT .
 ID cor
 NEWLINE \n
 ID echo
-COMMA ,
+STRING "Estranho , ne?"
 NEWLINE \n
 NEWLINE \n
 ID dec

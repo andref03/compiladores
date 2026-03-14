@@ -3,21 +3,38 @@ import re
 
 var code = readFile("compil_lab1_amostra_B_Andre_Felipe_de_Oliveira_Lopes.nim")
 
-# tratamento de símbolos para garantir que sejam isolados como tokens separados
-# SYMBOLS
+# tratamento de símbolos
 for c in [":", ",", ";", "(", ")", "[", "]", "."]:
   code = code.replace(c, " " & c & " ")
 
-# NEWLINE
+# tratamento de quebras de linha
 code = code.replace("\n", " NEWLINE ")
 
 # saída
 let output = open("compil_lab1_resposta_C_Andre_Felipe_de_Oliveira_Lopes.txt", fmWrite)
 
-# laço principal de tokenização
-for token in code.splitWhitespace():
+let tokens = code.splitWhitespace()
+var i = 0
 
-    case token
+# laço principal de tokenização
+while i < tokens.len:
+
+    var token = tokens[i]
+
+    # tratamento de strings
+    if token.startsWith("\""):
+
+        var strToken = token
+
+        while not strToken.endsWith("\"") and i+1 < tokens.len:
+            i += 1
+            strToken &= " " & tokens[i]
+
+        output.writeLine("STRING ", strToken)
+
+    else:
+
+        case token
         of "NEWLINE":
             output.writeLine("NEWLINE \\n")
 
@@ -63,34 +80,38 @@ for token in code.splitWhitespace():
         of "%":
             output.writeLine("MOD ", token)
 
-        of "<": 
-            output.writeLine("LT ", token) 
-            
-        of ">": 
-            output.writeLine("GT ", token) 
-        
-        of "<=": 
-            output.writeLine("LE ", token) 
-        
-        of ">=": 
-            output.writeLine("GE ", token) 
-        
-        of "==": 
-            output.writeLine("EQ ", token) 
-        
-        of "!=": 
+        of "<":
+            output.writeLine("LT ", token)
+
+        of ">":
+            output.writeLine("GT ", token)
+
+        of "<=":
+            output.writeLine("LE ", token)
+
+        of ">=":
+            output.writeLine("GE ", token)
+
+        of "==":
+            output.writeLine("EQ ", token)
+
+        of "!=":
             output.writeLine("NE ", token)
 
         else:
             if token.match(re"^([0-9]+\.[0-9]*|\.[0-9]+)([eE][+-]?[0-9]+)?$"):
                 output.writeLine("NUM_FLOAT ", token)
+
             elif token.match(re"^[0-9]+([eE][+-]?[0-9]+)?$"):
                 output.writeLine("NUM_INT ", token)
+
             elif token.match(re"^[a-zA-Z][a-zA-Z0-9_]*$"):
-                if token in ["type", "object", "proc", "if", "int", "elif", "else", "while", "return", "var", "not", "and", "or", "mod"]:
+                if token in ["type","object","proc","if","int","elif","else","while","return","var","not","and","or","mod"]:
                     output.writeLine("KEYWORD ", token)
                 else:
                     output.writeLine("ID ", token)
+
+    i += 1
 
 output.close()
 
