@@ -58,9 +58,7 @@ NUM_INT 0
 COLON :
 NEWLINE \n
 KEYWORD return
-NUM_INT 1
-DOT .
-NUM_INT 0
+NUM_FLOAT 1.0
 NEWLINE \n
 KEYWORD elif
 ID n
@@ -69,9 +67,7 @@ NUM_INT 1
 COLON :
 NEWLINE \n
 KEYWORD return
-NUM_INT 1
-DOT .
-NUM_INT 01
+NUM_FLOAT 1.01
 PLUS +
 ID v
 LBRACKET [
@@ -97,6 +93,9 @@ ID T
 DOT .
 ID a
 DOT .
+ID x
+MUL *
+ID T
 DOT .
 ID a
 DOT .
@@ -106,6 +105,9 @@ ID T
 DOT .
 ID b
 DOT .
+ID y
+MUL *
+ID T
 DOT .
 ID c
 DOT .
@@ -165,12 +167,14 @@ NEWLINE \n
 KEYWORD if
 ID temp
 LT <
-NUM_INT 0
-DOT .
-NUM_INT 0
+NUM_FLOAT 0.0
 COLON :
 NEWLINE \n
 ID res
+MINUS_ASSIGN -=
+ID res
+MUL *
+NUM_INT 2e-2
 PLUS +
 ID func
 LPAREN (
@@ -186,6 +190,9 @@ ID T
 DOT .
 ID a
 DOT .
+ID y
+MUL *
+ID T
 DOT .
 ID cor
 NEWLINE \n
@@ -193,6 +200,10 @@ KEYWORD else
 COLON :
 NEWLINE \n
 ID res
+PLUS_ASSIGN +=
+ID res
+MUL *
+NUM_INT 0
 DOT .
 NUM_INT 3e3
 PLUS +
@@ -210,6 +221,9 @@ ID T
 DOT .
 ID c
 DOT .
+ID x
+MUL *
+ID T
 DOT .
 ID cor
 NEWLINE \n
@@ -338,6 +352,7 @@ NUM_INT 0
 NEWLINE \n
 NEWLINE \n
 ID total
+PLUS_ASSIGN +=
 ID T
 DOT .
 ID c
@@ -351,6 +366,7 @@ DOT .
 ID y
 NEWLINE \n
 ID total
+PLUS_ASSIGN +=
 ID T
 DOT .
 ID b
@@ -364,6 +380,7 @@ DOT .
 ID y
 NEWLINE \n
 ID total
+PLUS_ASSIGN +=
 ID T
 DOT .
 ID a

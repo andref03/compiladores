@@ -4,7 +4,7 @@ import re
 var code = readFile("compil_lab1_amostra_B_Andre_Felipe_de_Oliveira_Lopes.nim")
 
 # tratamento de símbolos
-for c in [":", ",", ";", "(", ")", "[", "]", "."]:
+for c in [":", ",", ";", "(", ")", "[", "]", "*", "."]:
   code = code.replace(c, " " & c & " ")
 
 # tratamento de quebras de linha
@@ -13,8 +13,28 @@ code = code.replace("\n", " NEWLINE ")
 # saída
 let output = open("compil_lab1_resposta_C_Andre_Felipe_de_Oliveira_Lopes.txt", fmWrite)
 
-let tokens = code.splitWhitespace()
+var tokens = code.splitWhitespace()
+
+# recompor números floats (NUM . NUM)
+var processedTokens: seq[string] = @[]
 var i = 0
+
+while i < tokens.len:
+    if i + 2 < tokens.len and tokens[i+1] == "." and tokens[i].match(re"^[0-9]+$") and tokens[i+2].match(re"^[0-9]+$"):
+        # combinar em número float
+        processedTokens.add(tokens[i] & "." & tokens[i+2])
+        i += 3
+    elif i + 2 < tokens.len and tokens[i] == "." and tokens[i+1].match(re"^[0-9]+$") and tokens[i+2].match(re"^[eE][+-]?[0-9]+$"):
+        # combinar para notação científica (. NUM e)
+        processedTokens.add("." & tokens[i+1] & tokens[i+2])
+        i += 3
+    else:
+        processedTokens.add(tokens[i])
+        i += 1
+
+tokens = processedTokens
+
+i = 0
 
 # laço principal de tokenização
 while i < tokens.len:
@@ -97,6 +117,12 @@ while i < tokens.len:
 
         of "!=":
             output.writeLine("NE ", token)
+
+        of "+=":
+            output.writeLine("PLUS_ASSIGN ", token)
+
+        of "-=":
+            output.writeLine("MINUS_ASSIGN ", token)
 
         else:
             if token.match(re"^([0-9]+\.[0-9]*|\.[0-9]+)([eE][+-]?[0-9]+)?$"):
