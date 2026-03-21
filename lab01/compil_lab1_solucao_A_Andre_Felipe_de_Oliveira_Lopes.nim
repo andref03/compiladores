@@ -3,12 +3,39 @@ import re
 
 var code = readFile("compil_lab1_amostra_B_Andre_Felipe_de_Oliveira_Lopes.nim")
 
+# armazena informação de indentação antes de processar
+let originalLines = code.split("\n")
+var indentations: seq[int] = @[]
+
+# conta os espaços no início de cada linha
+for line in originalLines:
+    var indent = 0
+    while indent < line.len and line[indent] == ' ':
+        indent += 1
+    indentations.add(indent)
+
+# remove as indentações do início das linhas
+code = ""
+for i, line in originalLines:
+    var indent = indentations[i]
+    var content = if indent < line.len: line[indent..^1] else: ""
+    if i > 0:
+        code &= "\n"
+    code &= content
+
 # tratamento de símbolos
 for c in [":", ",", ";", "(", ")", "[", "]", "*", "."]:
   code = code.replace(c, " " & c & " ")
 
-# tratamento de quebras de linha
-code = code.replace("\n", " NEWLINE ")
+# tratamento de quebras de linha - incluir marcador de indentação
+var newCode = "SPACE_INDENT" & $indentations[0] & " "  # add indentação na primeira linha
+var codeLines = code.split("\n")
+for i, line in codeLines:
+    newCode &= line
+    if i < codeLines.len - 1:
+        newCode &= " NEWLINE_INDENT" & $indentations[i+1] & " "
+
+code = newCode
 
 # saída
 let output = open("compil_lab1_resposta_C_Andre_Felipe_de_Oliveira_Lopes.txt", fmWrite)
@@ -41,8 +68,16 @@ while i < tokens.len:
 
     var token = tokens[i]
 
+    # tratamento de indentação inicial ou após NEWLINE
+    if token.startsWith("SPACE_INDENT") or token.startsWith("NEWLINE_INDENT"):
+        if token.startsWith("NEWLINE_INDENT"):
+            output.writeLine("NEWLINE \\n")
+        let indentStr = token.replace("NEWLINE_INDENT", "").replace("SPACE_INDENT", "")
+        if indentStr.len > 0:
+            output.writeLine("SPACE ", indentStr)
+
     # tratamento de strings
-    if token.startsWith("\""):
+    elif token.startsWith("\""):
 
         var strToken = token
 
