@@ -1,5 +1,6 @@
 import strutils
 import re
+import tables
 
 var code = readFile("compil_lab1_amostra_B_Andre_Felipe_de_Oliveira_Lopes.nim")
 
@@ -60,6 +61,38 @@ while i < tokens.len:
 
 tokens = processedTokens
 i = 0
+
+# mapa de palavras-chave
+let keywordMap = {
+    "type": "KEYWORD_TYPE",
+    "object": "KEYWORD_OBJECT",
+    "proc": "KEYWORD_PROC",
+
+    "if": "KEYWORD_IF",
+    "elif": "KEYWORD_ELIF",
+    "else": "KEYWORD_ELSE",
+    "while": "KEYWORD_WHILE",
+    "return": "KEYWORD_RETURN",
+
+    "var": "KEYWORD_VAR",
+    "let": "KEYWORD_LET",
+
+    "int": "KEYWORD_INT",
+    "float": "KEYWORD_FLOAT",
+    "bool": "KEYWORD_BOOL",
+    "string": "KEYWORD_STRING",
+
+    "true": "KEYWORD_TRUE",
+    "false": "KEYWORD_FALSE",
+
+    "seq": "KEYWORD_SEQ",
+    "array": "KEYWORD_ARRAY",
+
+    "not": "KEYWORD_NOT",
+    "and": "KEYWORD_AND",
+    "or": "KEYWORD_OR",
+    "mod": "KEYWORD_MOD"
+}.toTable()
 
 # controle de escopo por indentação
 var indentStack: seq[int] = @[0]
@@ -175,8 +208,8 @@ while i < tokens.len:
                 output.writeLine("NUM_INT ", token)
 
             elif token.match(re"^[a-zA-Z][a-zA-Z0-9_]*$"):
-                if token in ["type","object","proc","if","int","elif","else","while","return","var","not","and","or","mod"]:
-                    output.writeLine("KEYWORD ", token)
+                if token in keywordMap:
+                    output.writeLine(keywordMap[token], " ", token)
                 else:
                     output.writeLine("ID ", token)
 
