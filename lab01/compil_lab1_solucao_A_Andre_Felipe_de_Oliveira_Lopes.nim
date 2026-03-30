@@ -17,23 +17,24 @@ for line in originalLines:
 # remove as indentações do início das linhas
 code = ""
 for i, line in originalLines:
-    var indent = indentations[i]
-    var content = if indent < line.len: line[indent..^1] else: ""
+    let indent = indentations[i]
+    let content = if indent < line.len: line[indent..^1] else: ""
     if i > 0:
         code &= "\n"
     code &= content
 
 # tratamento de símbolos
 for c in [":", ",", ";", "(", ")", "[", "]", "*", "."]:
-  code = code.replace(c, " " & c & " ")
+    code = code.replace(c, " " & c & " ")
 
-# tratamento de quebras de linha - incluir marcador de indentação
-var newCode = "SPACE_INDENT" & $indentations[0] & " "  # add indentação na primeira linha
-var codeLines = code.split("\n")
+# tratamento de quebras de linha com marcador de indentação
+var newCode = "LINE_INDENT" & $indentations[0] & " "
+let codeLines = code.split("\n")
+
 for i, line in codeLines:
     newCode &= line
     if i < codeLines.len - 1:
-        newCode &= " NEWLINE_INDENT" & $indentations[i+1] & " "
+        newCode &= " NEWLINE LINE_INDENT" & $indentations[i+1] & " "
 
 code = newCode
 
@@ -48,11 +49,9 @@ var i = 0
 
 while i < tokens.len:
     if i + 2 < tokens.len and tokens[i+1] == "." and tokens[i].match(re"^[0-9]+$") and tokens[i+2].match(re"^[0-9]+$"):
-        # combinar em número float
         processedTokens.add(tokens[i] & "." & tokens[i+2])
         i += 3
     elif i + 2 < tokens.len and tokens[i] == "." and tokens[i+1].match(re"^[0-9]+$") and tokens[i+2].match(re"^[eE][+-]?[0-9]+$"):
-        # combinar para notação científica (. NUM e)
         processedTokens.add("." & tokens[i+1] & tokens[i+2])
         i += 3
     else:
@@ -60,21 +59,33 @@ while i < tokens.len:
         i += 1
 
 tokens = processedTokens
-
 i = 0
+
+# controle de escopo por indentação
+var indentStack: seq[int] = @[0]
 
 # laço principal de tokenização
 while i < tokens.len:
 
-    var token = tokens[i]
+    let token = tokens[i]
 
-    # tratamento de indentação inicial ou após NEWLINE
-    if token.startsWith("SPACE_INDENT") or token.startsWith("NEWLINE_INDENT"):
-        if token.startsWith("NEWLINE_INDENT"):
-            output.writeLine("NEWLINE \\n")
-        let indentStr = token.replace("NEWLINE_INDENT", "").replace("SPACE_INDENT", "")
-        if indentStr.len > 0:
-            output.writeLine("SPACE ", indentStr)
+    # tratamento de quebra de linha
+    if token == "NEWLINE":
+        output.writeLine("NEWLINE \\n")
+
+    # tratamento de indentação / escopo
+    elif token.startsWith("LINE_INDENT"):
+        let indentStr = token.replace("LINE_INDENT", "")
+        let currentIndent = parseInt(indentStr)
+        let lastIndent = indentStack[^1]
+
+        if currentIndent > lastIndent:
+            indentStack.add(currentIndent)
+            output.writeLine("INDENT")
+        elif currentIndent < lastIndent:
+            while indentStack.len > 1 and indentStack[^1] > currentIndent:
+                discard indentStack.pop()
+                output.writeLine("DEDENT")
 
     # tratamento de strings
     elif token.startsWith("\""):
@@ -90,9 +101,6 @@ while i < tokens.len:
     else:
 
         case token
-        of "NEWLINE":
-            output.writeLine("NEWLINE \\n")
-
         of ":":
             output.writeLine("COLON ", token)
 
@@ -173,6 +181,11 @@ while i < tokens.len:
                     output.writeLine("ID ", token)
 
     i += 1
+
+# fechar escopos restantes no final do arquivo
+while indentStack.len > 1:
+    discard indentStack.pop()
+    output.writeLine("DEDENT")
 
 output.close()
 
