@@ -1,0 +1,38 @@
+# Dependency directories
+node_modules/
+vendor/
+venv/
+.venv/
+
+# Build outputs
+dist/
+build/
+out/
+bin/
+*.exe
+*.dll
+*.so
+
+# Environment secrets (DO NOT COMMIT THESE)
+.env
+*.key
+auth.json
+
+# IDE and Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+logs/
+*.tmp
+
+# others
+.codex
