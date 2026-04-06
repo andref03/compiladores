@@ -101,3 +101,57 @@ e imprimir no terminal os **tokens identificados no código fonte**, dentro do a
 ```
 compil_lab1_resposta_C_Andre_Felipe_de_Oliveira_Lopes.txt
 ```
+
+---
+
+## Lab02
+
+### Objetivo
+
+O **Lab02** consiste na implementação de um **analisador sintático LR(1)** para a linguagem Nim.
+
+Nesta etapa, o laboratório utiliza a sequência de tokens gerada previamente pelo analisador léxico para:
+
+* Validar se a entrada segue a gramática definida
+* Aplicar a tabela LR(1) durante o processo de análise
+* Construir a estrutura de parse a partir dos símbolos reconhecidos
+
+Os arquivos principais utilizados pelo laboratório são:
+
+* `gramatica.conf`: define a gramática da linguagem
+* `tabela_lr1.conf`: contém a tabela LR(1)
+* `entrada_parser.txt`: arquivo de entrada com os tokens do programa
+
+---
+
+### Como executar
+
+1. Acesse a pasta do laboratório:
+
+```bash
+cd lab02
+```
+
+2. Gere o arquivo de tokens de entrada:
+
+```bash
+nim r compil_lab1.nim
+```
+
+3. Compile o analisador sintático:
+
+```bash
+g++ -std=c++17 parserLR/src/*.cpp -o parserLR/bin/parserLR
+```
+
+4. Execute o parser LR(1):
+
+```bash
+./parserLR/bin/parserLR gramatica.conf tabela_lr1.conf < entrada_parser.txt > saida 2>&1
+```
+
+O resultado da execução será gravado no arquivo:
+
+```
+saida
+```
