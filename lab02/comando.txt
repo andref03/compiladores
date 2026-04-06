@@ -1,0 +1,3 @@
+cd /home/andref/Projetos/compiladores/compiladores/lab02
+g++ -std=c++17 parserLR/src/*.cpp -o parserLR/bin/parserLR
+./parserLR/bin/parserLR gramatica.conf tabela_lr1.conf < entrada_parser.txt > saida 2>&1
