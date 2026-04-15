@@ -9,7 +9,12 @@ let originalLines = code.split("\n")
 var indentations: seq[int] = @[]
 
 # conta os espaços no início de cada linha
+# linhas vazias não devem alterar a pilha de indentação
 for line in originalLines:
+    if line.strip().len == 0:
+        indentations.add(-1)
+        continue
+
     var indent = 0
     while indent < line.len and line[indent] == ' ':
         indent += 1
@@ -19,7 +24,13 @@ for line in originalLines:
 code = ""
 for i, line in originalLines:
     let indent = indentations[i]
-    let content = if indent < line.len: line[indent..^1] else: ""
+    let content =
+        if indent < 0:
+            ""
+        elif indent < line.len:
+            line[indent..^1]
+        else:
+            ""
     if i > 0:
         code &= "\n"
     code &= content
@@ -129,6 +140,10 @@ while i < tokens.len:
     elif token.startsWith("LINE_INDENT"):
         let indentStr = token.replace("LINE_INDENT", "")
         let currentIndent = parseInt(indentStr)
+        if currentIndent < 0:
+            i += 1
+            continue
+
         let lastIndent = indentStack[^1]
 
         if currentIndent > lastIndent:
