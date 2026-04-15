@@ -277,6 +277,7 @@ while i < tokens.len:
 
 # fechar escopos restantes no final do arquivo
 while indentStack.len > 1:
+    output.writeLine("NEWLINE \\n")
     discard indentStack.pop()
     output.writeLine("DEDENT DEDENT")
 
