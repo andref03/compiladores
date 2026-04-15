@@ -40,13 +40,28 @@ for c in [":", ",", ";", "(", ")", "[", "]", "*", ".", "@", "^"]:
     code = code.replace(c, " " & c & " ")
 
 # tratamento de quebras de linha com marcador de indentação
-var newCode = "LINE_INDENT" & $indentations[0] & " "
+var firstContentLine = 0
+while firstContentLine < indentations.len and indentations[firstContentLine] < 0:
+    firstContentLine += 1
+
+var newCode = ""
+if firstContentLine < indentations.len:
+    newCode = "LINE_INDENT" & $indentations[firstContentLine] & " "
+
 let codeLines = code.split("\n")
 
 for i, line in codeLines:
+    if indentations[i] < 0:
+        continue
+
     newCode &= line
-    if i < codeLines.len - 1:
-        newCode &= " NEWLINE LINE_INDENT" & $indentations[i+1] & " "
+
+    var nextContentLine = i + 1
+    while nextContentLine < indentations.len and indentations[nextContentLine] < 0:
+        nextContentLine += 1
+
+    if nextContentLine < indentations.len:
+        newCode &= " NEWLINE LINE_INDENT" & $indentations[nextContentLine] & " "
 
 code = newCode
 
