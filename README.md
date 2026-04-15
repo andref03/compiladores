@@ -147,7 +147,7 @@ g++ -std=c++17 parserLR/src/*.cpp -o parserLR/bin/parserLR
 4. Execute o parser LR(1):
 
 ```bash
-./parserLR/bin/parserLR gramatica.conf tabela_lr1.conf < entrada_parser.txt > saida 2>&1
+./parserLR/bin/parserLR gramatica.conf tabela_lr1.conf < tokens_entrada.txt > saida 2>&1
 ```
 
 O resultado da execução será gravado no arquivo:
