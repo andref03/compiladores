@@ -9,31 +9,30 @@ type
     c: Ponto
     cor: int
 
-proc func(v: seq[Ponto], n: int, T: Triangulo): float =
+proc func(n: int, T: Triangulo): float =
   if n <= 0:
     return 1.0
   elif n == 1:
-    return 1.01 + v[0].x / 1e2 + v[0].y / 0.1e-2 - T.a.x * T.a.x + T.b.y * T.c.x
+    return 1.01 + T.a.x / 1e2 + T.a.y / 0.1e-2 - T.a.x * T.a.x + T.b.y * T.c.x
 
   var res = 0.25e-13
 
   var i = n - 1
-  while i >= 0 and v[i].x > 0:
-    let temp = (v[i].y * v[i].x) mod 123
+  while i >= 0 and T.a.x > 0:
+    let temp = (T.a.y * T.a.x) mod 123
 
     if temp < 0.0:
-      res -= res * 2e-2 + func(v, n - 1, T) * temp - T.a.y * T.cor
+      res = res - res * 2e-2 + func(n - 1, T) * temp - T.a.y * T.cor
     else:
-      res += res * 0.3e3 + func(v, n - 2, T) * temp + T.c.x * T.cor
-      echo "Estranho, ne?\n"
+      res = res + res * 0.3e3 + func(n - 2, T) * temp + T.c.x * T.cor
 
-    dec i
+    i = i - 1
 
   return res
 
 proc f2A(T: Triangulo): int =
   var A = 0
-  var soma: array[10, float]
+  var soma = 0
 
   if ((T.a.x >= 10 or T.b.y > 20 or T.a.y < 30 or T.b.x <= 50) and not (T.c.x != 90 or T.c.y == 0)):
     return 10 mod 3
@@ -42,10 +41,10 @@ proc f2A(T: Triangulo): int =
 
   while A < 10:
     var total = 0
-    total += T.c.x * T.c.y
-    total += T.b.x * T.a.y
-    total += T.a.x * T.b.y
-    soma[A] = float(total mod 100)
+    total = T.c.x * T.c.y
+    total = total + T.b.x * T.a.y
+    total = total + T.a.x * T.b.y
+    soma = soma + total mod 100
     A = A + 1
 
   return 0
@@ -131,7 +130,7 @@ proc e1(a: int, b: int): int =
   let X = (not (a != b and a < b)) or (a + 2 == b)
 
   if a != b or X or a + 5 == b:
-    inc a
+    a = a + 1
 
   return 2
 
@@ -141,23 +140,25 @@ proc e2A(a: int, b: int): int =
   let X = (not (a != b and a < b)) or (a + 2 == b)
 
   while a != b or X or a + 5 == b:
-    inc a
+    a = a + 1
     while a < b:
-      dec b
+      b = b - 1
 
   return 2
 
-proc e2B(a: int, b: int): bool =
+proc e2B(a: int, b: int): int =
   var a = a
   var b = b
   let X = (not (a != b and a < b)) or (a + 2 == b)
 
   while a != b or X or a + 5 == b:
-    inc a
+    a = a + 1
     while fatorialA(a) < b:
-      dec b
+      b = b - 1
 
-  return X or a > 0
+  if X or a > 0:
+    return 1
+  return 0
 
 type
   Ponto2d = object
@@ -181,14 +182,14 @@ proc sqrt(x: float): float =
   return x ^ 0.5
 
 proc f1(seg: Segmento2d, p: Ponto2d): float =
-  let ax = float(seg.ini.x)
-  let ay = float(seg.ini.y)
+  let ax = seg.ini.x
+  let ay = seg.ini.y
 
-  let bx = float(seg.fim.x)
-  let by = float(seg.fim.y)
+  let bx = seg.fim.x
+  let by = seg.fim.y
 
-  let px = float(p.x)
-  let py = float(p.y)
+  let px = p.x
+  let py = p.y
 
   let abx = bx - ax
   let aby = by - ay
@@ -213,19 +214,19 @@ proc f1(seg: Segmento2d, p: Ponto2d): float =
 
   return sqrt(dx * dx + dy * dy)
 
-proc dist2(a: Ponto2d, b: Ponto2d): int64 =
-  let dx = int64(a.x) - int64(b.x)
-  let dy = int64(a.y) - int64(b.y)
+proc dist2(a: Ponto2d, b: Ponto2d): int =
+  let dx = a.x - b.x
+  let dy = a.y - b.y
   return dx * dx + dy * dy
 
-proc f2B(seg: Segmento2d, p: Ponto2d): int64 =
-  let ax = int64(seg.ini.x)
-  let ay = int64(seg.ini.y)
-  let bx = int64(seg.fim.x)
-  let by = int64(seg.fim.y)
+proc f2B(seg: Segmento2d, p: Ponto2d): int =
+  let ax = seg.ini.x
+  let ay = seg.ini.y
+  let bx = seg.fim.x
+  let by = seg.fim.y
 
-  let px = int64(p.x)
-  let py = int64(p.y)
+  let px = p.x
+  let py = p.y
 
   let abx = bx - ax
   let aby = by - ay
@@ -249,18 +250,20 @@ proc f2B(seg: Segmento2d, p: Ponto2d): int64 =
 
   return (cross * cross) div (abx * abx + aby * aby)
 
-proc areaPoligono(p: seq[Ponto2d], n: int): float =
-  var soma: int64 = 0
+proc areaPoligono(n: int): float =
+  var soma = 0
+  var i = 0
 
-  for i in 0 ..< n:
+  while i < n:
     let j = (i + 1) mod n
-    soma += int64(p[i].x) * int64(p[j].y) - int64(p[j].x) * int64(p[i].y)
+    soma = soma + i * j - j * i
+    i = i + 1
 
   if soma < 0:
-    soma = -soma
+    soma = 0 - soma
 
-  return float(soma) / 2.0
+  return soma
 
 proc areaPol(): float =
-  var poli: array[1000, Ponto2d]
-  return areaPoligono(@poli, 150)
+  return areaPoligono(150)
+
